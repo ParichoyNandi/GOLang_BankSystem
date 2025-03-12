@@ -200,67 +200,154 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Banking System</title>
 		<style>
-			body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
-			h2 { color: #007bff; }
-			form {
-				background: white; padding: 15px; margin: 10px auto; border-radius: 8px;
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px;
+			body {
+				font-family: Arial, sans-serif;
+				background: url('/static/bg.jpg') no-repeat center center fixed;
+				background-size: cover;
+				color: white;
+				text-align: center;
+				margin: 0;
+				padding: 0;
 			}
-			input, select, button { margin: 10px; padding: 8px; width: 90%; border-radius: 5px; }
-			button { background-color: #007bff; color: white; border: none; cursor: pointer; }
-			button:hover { background-color: #0056b3; }
+			h2 { margin-top: 20px; }
+			.container {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin-top: 20px;
+			}
+			.card {
+				background: rgba(255, 255, 255, 0.2); /* Translucent effect */
+				color: white;
+				padding: 15px;
+				border-radius: 10px;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+				width: 350px;
+				margin: 10px;
+				transition: all 0.3s ease-in-out;
+				backdrop-filter: blur(10px); /* Glassmorphism effect */
+			}
+			.card-header {
+				background: rgba(0, 123, 255, 0.7);
+				color: white;
+				padding: 10px;
+				cursor: pointer;
+				border-radius: 10px 10px 0 0;
+				font-weight: bold;
+			}
+			.card-content {
+				display: none;
+				padding: 15px;
+			}
+			.card.active .card-content {
+				display: block;
+			}
+			.card.active .card-header {
+				background: rgba(1, 33, 66, 0.8);
+			}
+			input, select, button {
+				margin: 8px 0;
+				padding: 10px;
+				width: 95%;
+				border-radius: 5px;
+				border: 1px solid #ddd;
+			}
+			button {
+				background-color: rgba(45, 220, 255, 0.8);
+				color: white;
+				border: none;
+				cursor: pointer;
+			}
+			button:hover { background-color: rgba(0, 86, 179, 0.9); }
 			#resultModal {
-				display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
-				background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+				display: none;
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				background: rgba(255, 255, 255, 0.9);
+				color: black;
+				padding: 20px;
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+				backdrop-filter: blur(5px);
+			}
+			@media (max-width: 768px) {
+				.container { width: 100%; }
+				.card { width: 90%; }
 			}
 		</style>
 	</head>
 	<body>
-		<h2>🏦 Banking System</h2>
+		<h2>🏦 Welcome to Your Bank</h2>
+		<div class="container">
 
-		<!-- Create Account Form -->
-		<form onsubmit="return handleSubmit(event, '/create')">
-			<h3>Create Account</h3>
-			<input type="text" name="name" placeholder="Name" required>
-			<input type="number" name="balance" placeholder="Initial Balance" required>
-			<select name="accountType">
-				<option value="Savings">Savings</option>
-				<option value="Current">Current</option>
-			</select>
-			<button type="submit">Create Account</button>
-		</form>
+			<!-- Create Account -->
+			<div class="card">
+				<div class="card-header" onclick="toggleCard(this)">🆕 Create Account ⬇️</div>
+				<div class="card-content">
+					<form onsubmit="return handleSubmit(event, '/create')">
+						<input type="text" name="name" placeholder="Full Name" required>
+						<input type="number" name="balance" placeholder="Initial Balance" required>
+						<select name="accountType">
+							<option value="Savings">Savings</option>
+							<option value="Current">Current</option>
+						</select>
+						<button type="submit">Create</button>
+					</form>
+				</div>
+			</div>
 
-		<!-- Deposit Money Form -->
-		<form onsubmit="return handleSubmit(event, '/deposit')">
-			<h3>Deposit Money</h3>
-			<input type="text" name="name" placeholder="Name" required>
-			<input type="number" name="amount" placeholder="Amount" required>
-			<button type="submit">Deposit</button>
-		</form>
+			<!-- Deposit Money -->
+			<div class="card">
+				<div class="card-header" onclick="toggleCard(this)">💰 Deposit Money ⬇️</div>
+				<div class="card-content">
+					<form onsubmit="return handleSubmit(event, '/deposit')">
+						<input type="text" name="name" placeholder="Account Name" required>
+						<input type="number" name="amount" placeholder="Amount" required>
+						<button type="submit">Deposit</button>
+					</form>
+				</div>
+			</div>
 
-		<!-- Withdraw Money Form -->
-		<form onsubmit="return handleSubmit(event, '/withdraw')">
-			<h3>Withdraw Money</h3>
-			<input type="text" name="name" placeholder="Name" required>
-			<input type="number" name="amount" placeholder="Amount" required>
-			<button type="submit">Withdraw</button>
-		</form>
+			<!-- Withdraw Money -->
+			<div class="card">
+				<div class="card-header" onclick="toggleCard(this)">🏧 Withdraw Money ⬇️</div>
+				<div class="card-content">
+					<form onsubmit="return handleSubmit(event, '/withdraw')">
+						<input type="text" name="name" placeholder="Account Name" required>
+						<input type="number" name="amount" placeholder="Amount" required>
+						<button type="submit">Withdraw</button>
+					</form>
+				</div>
+			</div>
 
-		<!-- Check Balance Form -->
-		<form onsubmit="return checkBalance(event)">
-			<h3>Check Balance</h3>
-			<input type="text" id="balanceName" placeholder="Enter Account Name" required>
-			<button type="submit">Check Balance</button>
-		</form>
+			<!-- Check Balance -->
+			<div class="card">
+				<div class="card-header" onclick="toggleCard(this)">📊 Check Balance ⬇️</div>
+				<div class="card-content">
+					<form onsubmit="return checkBalance(event)">
+						<input type="text" id="balanceName" placeholder="Account Name" required>
+						<button type="submit">Check</button>
+					</form>
+				</div>
+			</div>
 
-		<!-- Transaction History Form -->
-		<form onsubmit="return fetchHistory(event)">
-			<h3>Transaction History</h3>
-			<input type="text" id="historyName" placeholder="Enter Account Name" required>
-			<button type="submit">View History</button>
-		</form>
+			<!-- Transaction History -->
+			<div class="card">
+				<div class="card-header" onclick="toggleCard(this)">📜 Transaction History ⬇️</div>
+				<div class="card-content">
+					<form onsubmit="return fetchHistory(event)">
+						<input type="text" id="historyName" placeholder="Account Name" required>
+						<button type="submit">View</button>
+					</form>
+				</div>
+			</div>
+
+		</div>
 
 		<!-- Modal for Showing Responses -->
 		<div id="resultModal"></div>
@@ -286,15 +373,20 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 				event.preventDefault();
 				const name = document.getElementById('historyName').value;
 				fetch('/history?name=' + name)
-					.then(res => res.text())
-					.then(data => showModal(data));
+					.then(res => res.json())  
+					.then(data => showHistoryModal(data));
 			}
 
 			function showModal(message) {
 				const modal = document.getElementById('resultModal');
-				modal.innerHTML = message;
+				modal.innerHTML = '<h3>📢 Notification</h3><p>' + message + '</p>';
 				modal.style.display = 'block';
-				setTimeout(() => modal.style.display = 'none', 5000); // Hide modal after 5 seconds
+				setTimeout(() => modal.style.display = 'none', 5000);
+			}
+
+			function toggleCard(header) {
+				const card = header.parentElement;
+				card.classList.toggle('active');
 			}
 		</script>
 	</body>
@@ -309,7 +401,7 @@ func main() {
 	http.HandleFunc("/withdraw", withdrawMoney)     // Withdraw Money
 	http.HandleFunc("/balance", checkBalance)       // Check Balance
 	http.HandleFunc("/history", transactionHistory) // Transaction History
-
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	fmt.Println("Server is running on port 8080...")
 	fmt.Println("Server started at http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
